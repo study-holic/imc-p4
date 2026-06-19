@@ -1,4 +1,4 @@
-# Round 3 — Options Pricing & Backtester Reliability
+# Round 3
 
 ## Overview
 Round 3 was a step change in complexity: a dozen products arrived at once, comprising a small set of underlyings and a ladder of option-style vouchers spanning deep in-the-money to far out-of-the-money. The market now demanded derivatives thinking, implied volatility, a volatility smile, and the relationship between each voucher and its underlying, alongside the market-making from earlier rounds. It also became the round where I learned the most about how far my backtester could be trusted.
