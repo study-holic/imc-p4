@@ -1,4 +1,4 @@
-# IMC Prosperity 4 — Solo Competition
+# IMC Prosperity 4
 
 IMC Prosperity is a 15-day algorithmic and manual trading competition run by IMC Trading, a global proprietary trading firm. Each round combines a Python algorithm that trades a simulated market against bots, and a one-shot manual decision problem under uncertainty. I competed solo, without a team.
 
