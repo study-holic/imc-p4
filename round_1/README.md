@@ -1,4 +1,4 @@
-# Round 1 — Foundations & Market Making
+# Round 1
 
 ## Overview
 The opening round introduced two products with sharply different personalities: one stable and peg-like, the other persistently directional. With only a few days of order-book data per product, the real work was less about finding a clever edge and more about building the machinery to find edges reliably across the rounds to come.
