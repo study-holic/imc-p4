@@ -1,4 +1,4 @@
-# Round 4 — Over-Engineering & a Hard Lesson
+# Round 4
 
 ## Overview
 Round 4 carried forward the same product family as Round 3 and is, in retrospect, the round I learned the most from, not because it went well, but because it exposed the failure modes of my own process. The algorithm itself held up and scored positively, but the round total went negative on the back of a costly manual-trading decision, and the algorithm research showed how easily a well-fitted model becomes an over-fitted one.
