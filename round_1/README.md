@@ -1,26 +1,23 @@
-# Round 1
+# Round 1 — Foundations & Market Making
 
-## Products
+## Overview
+The opening round introduced two products with sharply different personalities: one stable and peg-like, the other persistently directional. With only a few days of order-book data per product, the real work was less about finding a clever edge and more about building the machinery to find edges reliably across the rounds to come.
 
-- `ASH_COATED_OSMIUM`
-- `INTARIAN_PEPPER_ROOT`
+## Exploratory Data Analysis
+I started by reconstructing mid-price series from the level-1 and level-2 order book and computing rolling statistics, moving mean and standard deviation, to see how tightly each product traded around a central value. For the directional product I fitted simple trend estimates and checked day-by-day consistency, to judge whether the movement was a stable feature or just an artefact of a single session. I volume-filtered the book to separate genuine market-maker quotes from thin, noisy levels, which mattered for computing a fair value that wasn't dragged around by one-lot orders. Spread and depth distributions told me how much room there was to quote passively without being immediately adversely selected. The work was deliberately descriptive; the goal was to classify each product into a market archetype, stable versus trending, so the right strategy template could be matched to it, rather than to extract one precise tradable threshold. This informed the choice of strategy archetype rather than producing a signal in itself.
 
-Position limit: 80 per product.
+## Strategy Approach
+Each product was handled by a modular strategy chosen from its archetype. The stable product used a market-making framework with an explicit fair value and inventory-aware quoting, so accumulated position was worked back toward neutral rather than left to run. The directional product used an accumulation approach that leaned into the observed drift. I kept strategies separate per product rather than forcing them into one monolithic rule set, a pattern that held for the rest of the competition.
 
-## Approach
+## Hyperparameter Tuning
+Tuning at this stage was manual: I compared candidate settings on the provided days and sanity-checked them for stability rather than optimising by search. Formal automated tuning came later, once the iteration loop and backtester were mature enough to justify it.
 
-Per-product market making. One product is treated as a stable asset and quoted around a fixed fair value with symmetric inventory-clearing logic; the other is treated as a directional product and the algorithm builds and holds a position rather than market-make.
-
-The trading loop is a single `Trader.run` that dispatches by product symbol. There is no shared persistent state in this round — each tick is handled from the order book and current position alone.
+## What I Learned
+- Most of the first round's value was infrastructural; a clean iteration loop pays compounding dividends across later rounds.
+- Matching a strategy archetype to an observed market archetype beat trying to make one rule fit both products.
+- Simpler quoting logic with understood failure modes was easier to trust than added complexity.
 
 ## Results
-
-| Metric         | Value          |
-| -------------- | -------------- |
-| Algorithm PnL  | +96,942 (rank 1231) |
-| Manual PnL     | +85,000 (rank 25)   |
-| Round position | 1375th         |
-
-## Reflection
-
-Round 1 was a confidence check on the submission pipeline as much as a strategy round — verifying that the `Trader` interface, position limits and order placement worked end-to-end. The manual trade scored well (top 25 globally) because the brief admitted a clean optimisation. Treating each product with the framework that best matches its statistical character (rather than forcing one model across both) carried over into every later round.
+- Algorithm PnL: +96,942 (rank 1,231 of ~18,803)
+- Manual PnL: +85,000 (rank 25)
+- Cumulative position: 1,375th
