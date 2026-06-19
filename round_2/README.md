@@ -1,4 +1,4 @@
-# Round 2 — Refinement & Adverse Selection
+# Round 2
 
 ## Overview
 Round 2 kept the same two products and added more data, so the focus shifted from discovery to refinement. The broad market picture was unchanged, one peg-like product, one directional, but the round became my first real encounter with the gap between what the backtester promised and what the live market delivered.
