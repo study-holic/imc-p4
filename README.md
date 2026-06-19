@@ -71,7 +71,7 @@ imc-prosperity-4-public/
     └── README.md
 ```
 
-## What's In Here (and What Isn't)
+## What's In Here
 This repository contains the algorithm I submitted for each round, a README per round, and a methodology write-up; these describe *how* I worked, in technique and lessons. The tuning rationale, the experimental log, and the reasoning for why each edge works are intentionally omitted: I'm competing again in Prosperity 5. The methodology is shareable; the playbook isn't.
 
 ## Tech Stack
