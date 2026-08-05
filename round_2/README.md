@@ -1,21 +1,21 @@
 # Round 2
 
 ## Overview
-Round 2 kept the same two products and added more data, so the focus shifted from discovery to refinement. The broad market picture was unchanged, one peg-like product, one directional, but the round became my first real encounter with the gap between what the backtester promised and what the live market delivered.
+Same two products as Round 1, but more data, so the focus shifted from figuring things out to actually refining what I had. The broad picture hadn't changed, still one peg-like product and one directional one, but this was the round where I first properly ran into the gap between what the backtester promised and what the live market actually paid.
 
 ## Exploratory Data Analysis
-The most useful analysis here was post-trade rather than pre-trade. I took the execution logs from the previous round and measured forward PnL by the price level at which each fill occurred, effectively asking, when I traded here, what happened next. This surfaced adverse selection: certain passive fills were systematically followed by unfavourable moves, meaning I was being picked off at specific levels. I also ran day-by-day comparisons of each candidate version against live results, and re-characterised the directional product's drift to confirm it held across the new session. I revisited spread and order-book imbalance distributions to see whether quoting behaviour needed to adapt. As in Round 1, I framed conclusions at the level of "this informs how passive quoting should be skewed," rather than a specific tradable rule. This investigation is what pointed me toward an inventory-aware quoting refinement.
+The most useful work here was looking backward rather than forward. I pulled the execution logs from Round 1 and measured forward PnL by the price level each fill happened at, basically asking: when I traded here, what happened next? That surfaced adverse selection, certain passive fills were reliably followed by a move against me, meaning I was getting picked off at specific levels. I also ran day-by-day comparisons of each candidate version against live results, and re-checked the directional product's drift to make sure it still held in the new session. I went back over spread and order-book imbalance too, to see if my quoting needed to adapt. Same as Round 1, I kept conclusions at the level of "this tells me how to skew passive quoting" rather than pulling out one specific rule. This is what pointed me toward an inventory-aware quoting refinement.
 
 ## Strategy Approach
-The peg-side strategy was extended from plain market-making toward inventory-skewed quoting, where the fair value used for quoting shifts with current position to discourage one-sided accumulation, an inventory-management idea in the Avellaneda–Stoikov family. The directional product's approach was left largely intact, since it was already performing near its ceiling. Strategies remained modular and per-product.
+On the peg side I extended the plain market-making setup into inventory-skewed quoting, where the fair value I quote around shifts with my current position so I'm less likely to keep piling up on one side. It's an inventory-management idea from the Avellaneda-Stoikov family. I left the directional product's approach mostly alone since it was already performing close to its ceiling. Both strategies stayed modular and per-product, same as before.
 
 ## Hyperparameter Tuning
-Still manual, but now disciplined by live feedback: I compared candidate changes against the prior live submission rather than judging them on backtester PnL alone, because the two were already visibly diverging.
+Still manual, but more disciplined now because live feedback was actually informing it. I compared candidate changes against the previous live submission rather than trusting backtester PnL on its own, since the two were already clearly diverging by this point.
 
 ## What I Learned
-- The backtester flattered complex changes; live results were the only ground truth, and I started treating them that way.
-- A theoretically nicer model didn't reliably beat a simpler, well-targeted fix in live conditions; the "clever" component added little on top of the basics.
-- Expanding complexity without a sim-to-live check was how the rank slipped this round; the lesson set up the gating discipline I used later.
+- The backtester made complex changes look better than they actually were. Live results were the only real ground truth, and I started treating them that way from here on.
+- A theoretically nicer model didn't reliably beat a simpler, more targeted fix once it hit live conditions. The clever bit added surprisingly little on top of the basics.
+- Adding complexity without checking it against live was what cost me rank this round. That's the lesson that set up the gating discipline I used later on.
 
 ## Results
 - Algorithm PnL: +76,850 (rank 3,242)
