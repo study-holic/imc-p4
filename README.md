@@ -1,13 +1,13 @@
 # IMC Prosperity 4
 
-IMC Prosperity is a 15-day algorithmic and manual trading competition run by IMC Trading, a global proprietary trading firm. Over five rounds, each team writes a Python algorithm that trades a simulated market against bots, and separately solves a one-shot manual decision problem under uncertainty. Every round introduces new products and market dynamics, and the leaderboard is recomputed cumulatively, so a strong finish only counts if the algorithm holds up across all five. I competed solo, against teams from top universities worldwide.
+IMC Prosperity is a 15-day algorithmic and manual trading competition run by IMC Trading, a global prop trading firm. Across five rounds you write a Python algorithm that trades against bots in a simulated market, plus a separate one-shot manual decision problem under uncertainty each round. New products and market dynamics get thrown at you every round, and the leaderboard is cumulative, so a strong last round only matters if the rest of your algorithm actually holds up. I did this solo, up against teams from top universities worldwide.
 
 ## Final Results
 - **1,190th overall out of 18,803 teams** (top 6.3%)
 - **318th globally in algorithmic trading** (top 1.7%)
 - **128th in the UK**
 - **69th globally in the Round 5 algorithm** (top 0.4%)
-- Competing solo against teams from **1,549 universities across 117 countries**
+- Solo, against teams from **1,549 universities across 117 countries**
 
 ## Round-by-Round Performance
 
@@ -24,25 +24,25 @@ Full breakdown in [`docs/results.md`](docs/results.md).
 ## Methodology
 
 ### Research Workflow
-Each round followed the same loop: exploratory analysis of the provided order-book CSVs, a strategy hypothesis matched to the observed market archetype, implementation against the IMC datamodel API, validation on a custom backtester, live submission, then a diagnosis of the delta between simulated and live results that fed the next iteration. I treated writeups from previous Prosperity competitions as first-class research inputs, mining them for which strategy families had historically transferred to live. The most valuable habit was closing the loop, never treating a backtester number as truth until it had survived the live market.
+Same loop every round: dig into the order-book CSVs, form a strategy hypothesis that actually matches what the data was doing, build it against the IMC datamodel API, validate on my own backtester, submit, then work out why the live result didn't match the backtest, and feed that into the next round. I went back through writeups from previous Prosperity competitions too, trying to figure out which strategy families had actually held up live versus just looked good on paper. Honestly the single most useful habit was refusing to trust a backtester number until it had survived contact with the real market.
 
 ### Exploratory Data Analysis
-Across rounds I used a consistent toolkit: rolling price statistics, tick-change autocorrelation, spread and volume-distribution analysis, order-book depth and imbalance, inter-product correlation matrices, volatility-regime detection, and day-by-day comparisons across the provided sessions. For derivative products this extended to implied-volatility series and volatility-smile analysis. The aim was always to classify a product into an archetype that dictated strategy, not to extract a single magic threshold. More detail in [`docs/methodology.md`](docs/methodology.md).
+Roughly the same toolkit every round: rolling price stats, tick-change autocorrelation, spread and volume distributions, order-book depth and imbalance, correlation matrices between products, volatility-regime detection, and comparing days against each other. For the options round I also pulled in implied vol series and looked at the vol smile. The point was never to fish out one magic threshold, it was to work out which archetype a product actually belonged to, since that's what decided the strategy. More detail in [`docs/methodology.md`](docs/methodology.md).
 
 ### Strategy Design
-I built a library of modular, per-product strategies rather than one monolithic system: market-making with inventory management, mean reversion via Z-score signals on rolling windows, momentum and trend-following, options pricing with Black-Scholes and smile-aware calibration, and basket/relative-value approaches. Each product was assigned the archetype its data supported. The modularity meant a failure in one product's model was contained rather than systemic.
+Rather than one big system trying to do everything, I built a library of per-product strategies: market-making with inventory management, mean reversion off Z-scores on rolling windows, momentum/trend-following, options pricing via Black-Scholes with smile-aware calibration, and basket/relative-value trades. Whatever archetype a product's data pointed to, that's the strategy it got. Which also meant if one product's model broke, it didn't take the rest of the system down with it.
 
 ### Hyperparameter Tuning
-Where a strategy had enough parameters to justify it, most notably the derivative-pricing round, I used Optuna with TPE sampling and a holdout-based stopping criterion, on the order of 50 to 200 trials per study, optimising risk-adjusted backtester PnL. Elsewhere, tuning was a disciplined manual grid validated by live A/B submissions. In all cases tuned values were candidates rather than answers, because the backtester's divergence from live was a known and quantified limitation.
+For anything with enough parameters to be worth it, mainly the derivatives round, I ran Optuna with TPE sampling and a holdout stopping rule, somewhere around 50-200 trials per study, optimising risk-adjusted backtester PnL. Everywhere else it was manual grid search validated by live A/B tests. Either way, tuned values were never treated as final, just candidates, because I knew the backtester diverged from live and by roughly how much.
 
 ### Versioning & Diagnostics
-I maintained structured versioning across submissions, dozens of incrementally numbered variants per round, each paired with a findings note recording what changed and why. Every live submission produced a delta analysis comparing what the backtester predicted against what the market actually paid. This diagnostic loop, more than any individual strategy, was what improved my results over the competition.
+I kept structured versions across submissions: dozens of numbered variants per round, each with a note on what changed and why. Every live submission got a delta analysis: what the backtester said would happen versus what actually happened in the market. This loop, more than any one clever strategy, is what actually moved my results over the competition.
 
 ## Key Methodological Lessons
-- Backtester results require calibration against live; marginal improvements below the simulation noise floor aren't reliable ship signals.
-- Simpler strategies with well-understood failure modes outperformed clever ones with hidden assumptions.
-- Per-product strategy archetypes outperformed monolithic frameworks.
-- Diagnosing the delta between simulated and live performance was more valuable than chasing absolute backtester PnL.
+- Backtester results need calibrating against live; improvements smaller than the simulation noise floor aren't a real signal to ship on.
+- Simple strategies with failure modes I understood beat clever ones with assumptions I hadn't fully tested.
+- Per-product archetypes beat one monolithic framework.
+- Working out the delta between simulated and live performance mattered more than chasing the highest backtester PnL.
 
 ## Repository Structure
 
@@ -72,7 +72,7 @@ imc-prosperity-4-public/
 ```
 
 ## What's In Here
-This repository contains the algorithm I submitted for each round, a README per round, and a methodology write-up; these describe *how* I worked, in technique and lessons. The tuning rationale, the experimental log, and the reasoning for why each edge works are intentionally omitted: I'm competing again in Prosperity 5. The methodology is shareable; the playbook isn't.
+This repo has the algorithm I submitted each round, a README per round, and a methodology write-up: the how, not the why. I've deliberately left out the tuning rationale, the experiment log, and the reasoning behind why each edge actually works, because I'm competing again in Prosperity 5. Happy to share the methodology; the playbook stays mine for now.
 
 ## Tech Stack
 - Python 3
@@ -80,11 +80,10 @@ This repository contains the algorithm I submitted for each round, a README per 
 - pandas, numpy for EDA
 - matplotlib, seaborn for visualisation
 - Optuna for hyperparameter tuning (TPE sampler, holdout-based stopping)
-- A custom Rust-based backtester for rapid iteration
+- A custom Rust-based backtester for fast iteration
 
 ## About the Competition
-IMC Prosperity is IMC Trading's annual 15-day algorithmic and manual trading competition, scoring algorithms against bot-populated order books on a hidden day of data. It's widely regarded as one of the closest experiences to real quant research available to students.
+IMC Prosperity is IMC Trading's annual 15-day algorithmic and manual trading competition, scored against bot-populated order books on a hidden day of data. Widely considered one of the closest things to real quant research that students can get their hands on.
 
 ## License
 MIT, see [`LICENSE`](LICENSE).
-```
